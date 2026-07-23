@@ -544,13 +544,21 @@ function drawCard(cv, card, hp) {
   ctx.fillText(card.name, W / 2 + 26, 68);
   ctx.shadowBlur = 0;
 
+  // special condition ribbon (right under the name, clear of the HP badge)
+  rr(ctx, 52, 126, W - 104, 58, 16);
+  ctx.fillStyle = 'rgba(0,0,0,0.45)'; ctx.fill();
+  ctx.lineWidth = 2.5; ctx.strokeStyle = hexA(card.color, 0.85); ctx.stroke();
+  ctx.fillStyle = '#ffd54a';
+  ctx.font = 'bold 25px "Segoe UI", sans-serif';
+  ctx.fillText('✨ ' + card.special.text, W/2, 156);
+
   // creature art (center) with glow
-  const g = ctx.createRadialGradient(W/2, 320, 20, W/2, 320, 175);
+  const g = ctx.createRadialGradient(W/2, 366, 20, W/2, 366, 180);
   g.addColorStop(0, hexA(card.color, 0.45)); g.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = g;
-  ctx.beginPath(); ctx.arc(W/2, 320, 175, 0, 7); ctx.fill();
-  ctx.font = '185px "Segoe UI Emoji", sans-serif';
-  ctx.fillText(card.emoji, W/2, 326);
+  ctx.beginPath(); ctx.arc(W/2, 366, 180, 0, 7); ctx.fill();
+  ctx.font = '195px "Segoe UI Emoji", sans-serif';
+  ctx.fillText(card.emoji, W/2, 372);
 
   // HP badge (top-left)
   ctx.beginPath(); ctx.arc(72, 72, 48, 0, 7);
@@ -563,14 +571,6 @@ function drawCard(cv, card, hp) {
   ctx.fillText(String(hp), 72, 64);
   ctx.font = 'bold 16px "Segoe UI", sans-serif';
   ctx.fillText('HP', 72, 96);
-
-  // special condition ribbon
-  rr(ctx, 52, 468, W - 104, 62, 16);
-  ctx.fillStyle = 'rgba(0,0,0,0.45)'; ctx.fill();
-  ctx.lineWidth = 2.5; ctx.strokeStyle = hexA(card.color, 0.85); ctx.stroke();
-  ctx.fillStyle = '#ffd54a';
-  ctx.font = 'bold 25px "Segoe UI", sans-serif';
-  ctx.fillText('✨ ' + card.special.text, W/2, 500);
 
   // bottom stats: required dice for ATK / DEF + rerolls
   rr(ctx, 36, 556, W - 72, 122, 18);

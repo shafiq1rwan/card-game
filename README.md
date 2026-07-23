@@ -60,7 +60,7 @@ Stats were tuned by Monte-Carlo simulation (600 optimal-vs-optimal games per mat
 | File | What it is |
 |---|---|
 | `index.html` | **The game** (dark-felt style — canonical version) |
-| `cosmicon-style.html` | Alternative UI skin inspired by the screenshots in `reference/` (lobby, VS screen, pixel-pop styling). Same rules & balance. |
+| `cosmicon-style.html` | Alternative UI skin inspired by the screenshots in `reference/` (lobby, VS screen, pixel-pop styling). Same rules & balance, also mobile-ready. |
 | `reference/` | Visual reference screenshots used for the alternative skin |
 
 ## 🛠 Tech Notes

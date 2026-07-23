@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#141a3c">
+<meta name="mobile-web-app-capable" content="yes">
 <title>Dice Card Battle — Roll On!</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
@@ -10,6 +12,7 @@
     width:100%; height:100%; overflow:hidden;
     background:radial-gradient(1300px at 30% -10%, #2b3a7a, #141a3c 55%, #0e1230 100%);
     font-family:'Segoe UI', system-ui, sans-serif; color:#fff; user-select:none;
+    -webkit-touch-callout:none;
   }
   body::before {  /* halftone dots over the gradient, behind the 3D canvas */
     content:''; position:fixed; inset:0; z-index:-1;
@@ -18,8 +21,9 @@
   }
   .hidden { display:none !important; }
   #scene-container { position:fixed; inset:0; }
-  #scene-container canvas { display:block; }
+  #scene-container canvas { display:block; touch-action:none; }
   small { font-weight:700; }
+  button { touch-action:manipulation; }
 
   /* ============ shared chips / buttons (HSR pop-art style) ============ */
   .chip-btn {
@@ -399,6 +403,139 @@
   .pop-def   { font-size:30px; color:#5ec8ff; }
   .pop-block { font-size:34px; color:#7dd3fc; }
   .pop-info  { font-size:28px; color:#fff; }
+
+  /* ============ Mobile: narrow screens (portrait phones) ============ */
+  @media (max-width: 700px) {
+    #main-topbar { top:10px; left:12px; gap:8px; }
+    #main-topbar .logo { font-size:22px; }
+    #main-topbar .t1 { font-size:14px; }
+    #main-topbar .t2 { font-size:11px; }
+    #main-throw { left:50%; top:16%; font-size:13px; }
+    #main-menu { top:auto; bottom:calc(10px + env(safe-area-inset-bottom)); left:12px; right:12px; width:auto; gap:9px; }
+    #featured { padding:12px 14px; }
+    #featured .f-emoji { font-size:42px; }
+    #featured .f-name { font-size:12.5px; padding:4px 10px; margin-top:3px; }
+    #featured .f-row { margin-top:8px; padding:8px 10px; }
+    #featured .f-mode { font-size:12px; }
+    #btn-bring { font-size:15px; padding:8px 16px; }
+    .tab { padding:8px 4px; font-size:12px; }
+    .menu-chip { padding:8px 6px; font-size:11.5px; }
+    .menu-chip span.ic { font-size:17px; }
+    #uid { font-size:9px; }
+
+    #vs-big { font-size:70px; }
+    .vs-name { top:44px; font-size:13px; padding:5px 14px 5px 6px; }
+    .vs-name .av { width:30px; height:30px; font-size:17px; }
+    .vs-slot { width:144px; height:201px; }
+    .vs-slot canvas { width:144px; }
+    .vs-slot.empty .plus { font-size:44px; }
+    #vs-info { top:10%; padding:7px 14px 9px; width:max-content; max-width:92vw; }
+    #vs-info .w1 { font-size:14px; }
+    #vs-info .w2 { font-size:10.5px; }
+    #btn-edit { padding:8px 24px !important; font-size:13px !important; }
+    #btn-settle { bottom:calc(22px + env(safe-area-inset-bottom)); font-size:15px; padding:11px 26px; }
+    .x-btn { top:12px; right:14px; width:38px; height:38px; font-size:18px; }
+
+    #screen-select { flex-direction:column; justify-content:flex-start; gap:12px; overflow-y:auto; padding:64px 10px calc(24px + env(safe-area-inset-bottom)); }
+    #select-head { top:14px; left:14px; }
+    #sel-left { align-items:center; }
+    #card-grid { grid-template-columns:repeat(3, 96px); gap:10px; max-height:none; overflow:visible; }
+    .thumb { width:96px; }
+    #sel-preview canvas { width:190px; }
+    #btn-deploy { font-size:15px; padding:11px 30px; }
+
+    #ms-title { font-size:38px; }
+    #ms-dice { font-size:70px; }
+    #ms-flame { font-size:100px; top:-30px; }
+    #ms-sub { font-size:13px; padding:8px 20px; }
+    #splash-matchstart .checker { height:40px; background-size:40px 40px; }
+
+    #banner-chip { top:10px; font-size:13px; padding:7px 18px; }
+    #hud-ai { top:46px; left:8px; }
+    #hud-player { top:46px; bottom:auto; right:8px; }
+    .effect-chip { display:none; }
+    .mini-wrap { width:64px; }
+    .mini-card { width:64px; height:64px; border-radius:12px; font-size:34px; }
+    .hp-drop { min-width:32px; height:32px; font-size:14px; top:-9px; left:-9px; border-width:2px; }
+    .mini-hex { width:25px; height:29px; font-size:10px; bottom:-8px; }
+    .mini-name { font-size:10px; }
+    .mini-bar { height:6px; }
+    #ai-dice-row { top:158px; }
+    #player-dice-row { bottom:64px; }
+    .die-tile { width:29px; height:29px; font-size:15px; border-radius:7px; }
+    #log { display:none; }
+    #hint { bottom:calc(10px + env(safe-area-inset-bottom)); font-size:12px; max-width:94vw; padding:6px 12px; min-height:30px; }
+    #stack { right:calc(8px + env(safe-area-inset-right)); gap:10px; }
+    .stack-btn { width:62px; height:62px; font-size:19px; border-width:3px; }
+    .stack-btn small { font-size:9px; }
+
+    #resolve-overlay { width:min(340px, 88vw); height:min(320px, 46vh); border-radius:24px; }
+    .rs-val { font-size:52px; }
+    .rs-ico { font-size:26px; }
+    .rs-crown { right:14px; font-size:26px; }
+    #rs-vs { font-size:26px; }
+    #ko-text { font-size:min(130px, 34vw); -webkit-text-stroke:5px #1c2340; }
+
+    #screen-victory { gap:14px; }
+    #vic-dice { font-size:30px; }
+    #vic-title { font-size:32px; }
+    #vic-sub { font-size:13px; }
+    #vic-cards { gap:12px; }
+    .vic-card canvas { width:min(140px, 36vw); }
+    .vic-crown { top:-36px; font-size:30px; }
+    .vic-bubble { width:min(130px, 30vw); font-size:10px; }
+    #vic-vs { font-size:34px; }
+    #vic-rewards { flex-wrap:wrap; justify-content:center; gap:8px; }
+    .reward { font-size:11.5px; padding:6px 10px; }
+    #btn-back { font-size:15px; padding:10px 30px; }
+    #rules-box { padding:18px 20px; }
+    #rules-box li { font-size:12.5px; }
+  }
+
+  /* ============ Mobile: short screens (landscape phones) ============ */
+  @media (max-height: 470px) {
+    #main-menu { width:300px; top:54px; right:12px; gap:8px; }
+    #featured { padding:10px 12px; }
+    #featured .f-emoji { font-size:34px; }
+    #btn-bring { font-size:13px; padding:7px 12px; }
+    .menu-chip { padding:6px 4px; font-size:10.5px; }
+    #banner-chip { top:6px; font-size:12px; padding:5px 16px; }
+    #hud-ai { top:6px; left:8px; }
+    #hud-player { bottom:6px; right:8px; }
+    .effect-chip { max-width:170px; font-size:10px; padding:6px 8px; }
+    .mini-wrap { width:54px; }
+    .mini-card { width:54px; height:54px; font-size:28px; border-radius:10px; }
+    .hp-drop { min-width:28px; height:28px; font-size:12px; top:-8px; left:-8px; border-width:2px; }
+    .mini-hex { width:22px; height:25px; font-size:9px; }
+    .mini-name { font-size:9.5px; }
+    #log { display:none; }
+    #hint { bottom:8px; font-size:11px; min-height:26px; padding:5px 10px; }
+    #stack { gap:8px; right:12px; }
+    .stack-btn { width:54px; height:54px; font-size:17px; border-width:3px; }
+    .stack-btn small { font-size:8.5px; }
+    #ai-dice-row { top:66px; }
+    #player-dice-row { bottom:52px; }
+    .die-tile { width:26px; height:26px; font-size:13px; }
+    .vs-slot { width:118px; height:165px; }
+    .vs-slot canvas { width:118px; }
+    #vs-big { font-size:54px; }
+    #btn-settle { bottom:14px; font-size:13px; padding:8px 20px; }
+    #screen-select { gap:24px; }
+    #card-grid { grid-template-columns:repeat(3, 78px); gap:8px; max-height:70vh; }
+    .thumb { width:78px; }
+    #sel-preview canvas { width:150px; }
+    #btn-deploy { font-size:13px; padding:8px 22px; }
+    #resolve-overlay { height:min(240px, 70vh); }
+    .rs-val { font-size:42px; }
+    #ko-text { font-size:min(110px, 30vh); }
+    #screen-victory { gap:8px; }
+    #vic-title { font-size:24px; }
+    .vic-card canvas { width:110px; }
+    .vic-crown { top:-30px; font-size:24px; }
+    #ms-title { font-size:30px; }
+    #ms-dice { font-size:54px; }
+    #ms-flame { font-size:76px; top:-22px; }
+  }
 </style>
 </head>
 <body>
@@ -891,8 +1028,16 @@ const CAM = {
   main:   { pos: new THREE.Vector3(1.4, 10.8, 13.4), tgt: new THREE.Vector3(3.4, 0.3, -0.6) },
   battle: { pos: new THREE.Vector3(0, 11.6, 12.0),  tgt: new THREE.Vector3(0, 0.2, -0.5) },
 };
+/* portrait phones: menu docks to the bottom, so the arena stays centered;
+   battle camera pulls up/back so top+bottom card positions fit the tall frame */
+const CAM_PORTRAIT = {
+  main:   { pos: new THREE.Vector3(0, 12.6, 11.6), tgt: new THREE.Vector3(0, 1.4, -0.8) },
+  battle: { pos: new THREE.Vector3(0, 14.2, 12.6), tgt: new THREE.Vector3(0, 0.2, 0.3) },
+};
+let portrait = false, camMode = 'main';
 const camPos = CAM.main.pos.clone();
 const camTgt = CAM.main.tgt.clone();
+function camPreset(mode) { return (portrait ? CAM_PORTRAIT : CAM)[mode]; }
 
 function roundedRectShape(w, h, r) {
   const s = new THREE.Shape();
@@ -1025,17 +1170,23 @@ function makeRing(color) {
 
 function fitCamera() {
   const aspect = innerWidth / innerHeight;
-  fitF = Math.min(Math.max(1.45 / aspect, 1), 1.9);
+  portrait = aspect < 0.9;
+  fitF = portrait
+    ? Math.max(1, 0.5 / aspect)                          // extra pull-back on very tall screens
+    : Math.min(Math.max(1.45 / aspect, 1), 1.9);
   camera.aspect = aspect;
   camera.updateProjectionMatrix();
+  switchCam(camMode, 0);                                 // re-apply preset for the new orientation
+  layoutBoard();
 }
 function onResize() {
   fitCamera();
   renderer.setSize(innerWidth, innerHeight);
 }
 function switchCam(mode, dur = 0.9) {
+  camMode = mode;
   const from = { p: camPos.clone(), t: camTgt.clone() };
-  const to = CAM[mode];
+  const to = camPreset(mode);
   if (dur <= 0) { camPos.copy(to.pos); camTgt.copy(to.tgt); return Promise.resolve(); }
   return tween({ dur, update: e => {
     camPos.lerpVectors(from.p, to.pos, e);
@@ -1139,6 +1290,30 @@ function rollDice(indices) {
     return animateDieRoll(diceMeshes[i], diceValues[i], k * 0.09);
   }));
 }
+
+/* shrink away any dice left on the table (e.g. idle rolls from the main screen)
+   so the coin flip gets a clean tray — they drop back in on the next roll */
+function hideDice() {
+  const anims = [];
+  diceMeshes.forEach((die, k) => {
+    if (!die.visible) return;
+    die.userData.animating = true;
+    anims.push(tween({
+      dur: 0.35, delay: k * 0.06, ease: easeInCubic,
+      update: e => {
+        die.scale.setScalar(1 - e);
+        die.position.y = die.userData.home.y + e * 0.6;
+      },
+    }).then(() => {
+      die.visible = false;
+      die.scale.setScalar(1);
+      die.position.y = die.userData.home.y;
+      die.userData.animating = false;
+    }));
+  });
+  return Promise.all(anims);
+}
+
 function setDieSelected(i, on, color = 0xffc233) {
   const die = diceMeshes[i];
   die.userData.targetY = die.userData.home.y + (on ? 0.45 : 0);
@@ -1287,6 +1462,23 @@ function clearKeptDice() {
 const battle = { player: null, ai: null };
 let roundNo = 1;
 
+/* card positions depend on orientation: corners in landscape, top/bottom in portrait */
+function cardPos(side) {
+  if (portrait) return side === 'ai' ? { x: -1.75, z: -3.9 } : { x: 1.75, z: 4.3 };
+  return side === 'ai' ? { x: -4.7, z: -2.9 } : { x: 4.7, z: 2.9 };
+}
+let currentAttackerSide = null;
+function layoutBoard() {
+  for (const side of ['player', 'ai']) {
+    const S = battle[side];
+    if (!S) continue;
+    const p = cardPos(side);
+    S.mesh.position.x = p.x;
+    S.mesh.position.z = p.z;
+  }
+  if (currentAttackerSide && atkRing && atkRing.visible) setRings(currentAttackerSide);
+}
+
 function makeSide(side, card) {
   const canvas = cardCanvas(card, card.hp);
   const texture = new THREE.CanvasTexture(canvas);
@@ -1296,10 +1488,9 @@ function makeSide(side, card) {
     new THREE.MeshBasicMaterial({ map: texture, transparent: true })
   );
   mesh.castShadow = true;
-  const x = side === 'ai' ? -4.7 : 4.7;
-  const z = side === 'ai' ? -2.9 : 2.9;
+  const p = cardPos(side);
   const baseY = 1.85;
-  mesh.position.set(x, baseY, z);
+  mesh.position.set(p.x, baseY, p.z);
   mesh.rotation.x = -0.28;
   mesh.rotation.y = side === 'ai' ? 0.22 : -0.22;
   mesh.userData.baseY = baseY;
@@ -1362,6 +1553,7 @@ async function enterCards() {
   shake(0.15);
 }
 function setRings(attSide) {
+  currentAttackerSide = attSide;
   const A = battle[attSide].mesh.position, D = battle[other(attSide)].mesh.position;
   atkRing.position.set(A.x, 0.04, A.z);
   defRing.position.set(D.x, 0.04, D.z);
@@ -1387,9 +1579,21 @@ async function coinFlip() {
     ]
   );
   coin.castShadow = true;
-  coin.position.set(0, 0.6, 1.0);
+  // toss the coin in from above instead of popping it into existence
+  coin.position.set(0, 7, 1.0);
   scene.add(coin);
-  await wait(0.7);
+  await tween({
+    dur: 0.7, ease: easeInCubic,
+    update: e => {
+      coin.position.y = lerp(7, 0.6, e);
+      coin.rotation.x = e * Math.PI * 4;   // ends face-up (whole turns) for the flip below
+    },
+  });
+  await tween({                            // small landing bounce
+    dur: 0.3,
+    update: (e, k) => { coin.position.y = 0.6 + 0.45 * 4 * k * (1 - k); },
+  });
+  await wait(0.35);
 
   const flips = 7 + randInt(0, 2);
   const totalAngle = flips * Math.PI * 2 + (playerFirst ? 0 : Math.PI);
@@ -1735,18 +1939,15 @@ let idleActive = false, idlePromise = null;
 function startIdleDice() {
   if (idleActive) return;
   idleActive = true;
+  const prev = idlePromise;
   idlePromise = (async () => {
+    if (prev) await prev;               // never overlap a still-settling roll
     await wait(0.5);
     while (idleActive) {
       await rollDice([0, 1, 2, 3, 4]);
       await wait(2.4);
     }
   })();
-}
-async function stopIdleDice() {
-  idleActive = false;
-  if (idlePromise) await idlePromise;
-  idlePromise = null;
 }
 
 function toast(text) {
@@ -1769,7 +1970,7 @@ async function mainScreen() {
   el('btn-collection').onclick = () => toast('🔒 Coming soon!');
   el('btn-store').onclick = () => toast('🔒 Coming soon!');
   await new Promise(res => { el('btn-bring').onclick = res; });
-  await stopIdleDice();
+  idleActive = false;                   // idle roll settles in the background (awaited before battle)
   el('screen-main').classList.add('hidden');
   el('rules-overlay').classList.add('hidden');
   switchCam('battle', 1.0);
@@ -1864,8 +2065,11 @@ async function main() {
     if (!picked) continue;                 // ✕ on VS screen → back to main
 
     await matchStart();
+    if (idlePromise) await idlePromise;     // ensure no idle roll is mid-flight
     setupBattle(picked.playerCard, picked.aiCard);
+    const diceCleared = hideDice();         // clear leftover idle dice before the coin flip
     await enterCards();
+    await diceCleared;
     const playerFirst = await coinFlip();
     logLine(`🪙 Coin flip: ${playerFirst ? '<span class="you">You</span> attack' : '<span class="ai">AI</span> attacks'} first!`);
     await showOverlay(
