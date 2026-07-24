@@ -176,6 +176,8 @@
     position:absolute; left:50%; bottom:44px; transform:translateX(-50%); z-index:3;
     font-size:19px; font-style:italic;
   }
+  /* invisible twin of the Edit button so both card slots sit at the same height */
+  .vs-ghostbtn { visibility:hidden; padding:10px 34px; font-size:15px; }
 
   /* ============ CARD SELECT SCREEN ============ */
   #screen-select {
@@ -189,19 +191,17 @@
   }
   #select-head { position:absolute; top:22px; left:26px; display:flex; align-items:center; gap:14px; }
   #select-head .logo { font-size:26px; }
-  #sel-left { display:flex; flex-direction:column; gap:14px; z-index:2; }
+  #sel-left { display:flex; flex-direction:column; gap:16px; z-index:2; align-items:center; }
   #card-grid {
-    display:grid; grid-template-columns:repeat(3, 122px); gap:14px;
-    max-height:66vh; overflow-y:auto; padding:6px;
+    display:grid; grid-template-columns:repeat(3, 150px); gap:14px;
+    max-height:62vh; overflow-y:auto; padding:6px;
   }
   .thumb {
-    width:122px; border-radius:10px; cursor:pointer; position:relative;
-    transition:transform .15s, box-shadow .15s; box-shadow:0 6px 16px rgba(0,0,0,.4);
+    width:150px; border-radius:10px; cursor:pointer; position:relative;
+    transition:filter .15s, box-shadow .15s; box-shadow:0 6px 16px rgba(0,0,0,.4);
   }
-  .thumb:hover { transform:translateY(-6px); }
+  .thumb:hover { filter:brightness(1.08); }
   .thumb.sel { outline:4px solid #8fe0ff; box-shadow:0 0 22px rgba(140,220,255,.8); }
-  #sel-right { display:flex; flex-direction:column; align-items:center; gap:20px; z-index:2; }
-  #sel-preview canvas { width:296px; border-radius:16px; box-shadow:0 18px 44px rgba(0,0,0,.55); }
   #btn-deploy { font-size:19px; }
 
   /* ============ MATCH START SPLASH ============ */
@@ -549,7 +549,7 @@
     #vs-info { top:10%; padding:7px 14px 9px; width:max-content; max-width:92vw; }
     #vs-info .w1 { font-size:14px; }
     #vs-info .w2 { font-size:10.5px; }
-    #btn-edit { padding:8px 24px !important; font-size:13px !important; }
+    #btn-edit, .vs-ghostbtn { padding:8px 24px !important; font-size:13px !important; }
     #btn-settle { bottom:calc(22px + env(safe-area-inset-bottom)); font-size:15px; padding:11px 26px; }
     .x-btn { top:12px; right:14px; width:38px; height:38px; font-size:18px; }
 
@@ -558,7 +558,6 @@
     #sel-left { align-items:center; }
     #card-grid { grid-template-columns:repeat(3, 96px); gap:10px; max-height:none; overflow:visible; }
     .thumb { width:96px; }
-    #sel-preview canvas { width:190px; }
     #btn-deploy { font-size:15px; padding:11px 30px; }
 
     #ms-title { font-size:38px; }
@@ -638,9 +637,8 @@
     #vs-big { font-size:54px; }
     #btn-settle { bottom:14px; font-size:13px; padding:8px 20px; }
     #screen-select { gap:24px; }
-    #card-grid { grid-template-columns:repeat(3, 78px); gap:8px; max-height:70vh; }
+    #card-grid { grid-template-columns:repeat(6, 78px); gap:8px; max-height:70vh; }
     .thumb { width:78px; }
-    #sel-preview canvas { width:150px; }
     #btn-deploy { font-size:13px; padding:8px 22px; }
     #resolve-overlay { height:min(240px, 70vh); }
     .rs-val { font-size:42px; }
@@ -726,6 +724,7 @@
   <div class="vs-side" id="vs-right">
     <div class="vs-name">Cosmo Bot<span class="av">🤖</span></div>
     <div class="vs-slot" id="vs-ai-slot"></div>
+    <button class="chip-btn vs-ghostbtn" tabindex="-1">Edit</button>
   </div>
   <button class="chip-btn" id="btn-settle" disabled>Time to settle this!</button>
 </div>
@@ -740,9 +739,6 @@
   <div id="sel-left">
     <div class="label-chip">Select a card to use</div>
     <div id="card-grid"></div>
-  </div>
-  <div id="sel-right">
-    <div id="sel-preview"></div>
     <button class="chip-btn" id="btn-deploy">Deploy</button>
   </div>
 </div>
@@ -2480,21 +2476,18 @@ function selectScreen(initial) {
     const grid = el('card-grid');
     grid.innerHTML = '';
     let current = initial || CARDS[0];
-    const preview = el('sel-preview');
-    const setPreview = card => {
+    const setSel = card => {
       current = card;
-      preview.innerHTML = '';
-      preview.appendChild(cardCanvas(card, card.hp));
       for (const t of grid.children) t.classList.toggle('sel', t.dataset.id === card.id);
     };
     for (const card of CARDS) {
       const cv = cardCanvas(card, card.hp);
       cv.className = 'thumb';
       cv.dataset.id = card.id;
-      cv.onclick = () => { SFX.select(); setPreview(card); };
+      cv.onclick = () => { SFX.select(); setSel(card); };
       grid.appendChild(cv);
     }
-    setPreview(current);
+    setSel(current);
     el('screen-select').classList.remove('hidden');
     wipeReveal();
     const close = async val => {
