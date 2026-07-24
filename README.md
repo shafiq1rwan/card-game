@@ -19,8 +19,8 @@ The game is fully touch-enabled and has a dedicated portrait layout — cards mo
 
 ## 🎮 How to Play
 
-1. **Main screen** → hit *Player vs AI* (the dice roll themselves while you decide; *How to Play* has the full rules).
-2. **Choose your card** — tap a card to select it, then confirm with *⚔️ Battle!*. The AI picks a rival card.
+1. **Main lobby** → hit *Bring it on!* (the dice roll themselves while you decide; *Rules* has the full how-to).
+2. **VS screen** — tap *Edit* to open the card collection, pick your card in the big preview, *Deploy*, then *Time to settle this!*
 3. A 3D **coin flip** decides who attacks first (👑 you / 🤖 AI). Attacker and defender swap every round.
 4. On your turn, **roll 5 dice**, then tap dice to select exactly the number your card needs (⚔️ ATK dice when attacking, 🛡️ DEF dice when defending). Their sum is your combat value.
 5. Not happy? Select any dice and **↻ reroll** them instead — each card has 2–3 reroll chances per turn.
@@ -45,14 +45,13 @@ Stats were tuned by Monte-Carlo simulation (600 optimal-vs-optimal games per mat
 
 ## ✨ Features
 
-- **3D board** — felt table split diagonally into AI (top-left) and player (bottom-right) zones, with a center dice tray
+- **3D arena** — rounded white stadium floor with red (AI) and blue (you) halves, a dark rim, and floating pixel cubes drifting around it — straight out of the reference screenshots
 - **Animated everything** — tumbling dice with staggered bounces, coin flip tossed in with spin & settle, particles, camera shake, HP counting down live on the card art, death topple
-- **Signature attacks per card** — 🐉 fireball with flame trail, 🗿 boulder toss that shatters, 🐺 pounce with claw slashes, 🧚 sparkle barrage, 🐍 poison spray with rising bubbles, 🐯 ice-shard volley
-- **Shield defense** — every defender raises a shining transparent dome that shimmers while the attack flies in, then absorbs the hit or shatters
-- **Clear turn signals** — a blue/red banner sweeps across the board announcing each turn, and the dice themselves are color-coded: ivory when you roll, crimson when the AI rolls
+- **Full screen flow** — lobby with idle dice, blue-vs-red VS screen, card collection with big preview, Match Start splash, red-vs-blue ATK/DEF compare with a 👑 on the exchange winner, a giant KO slam, and a victory screen with the loser's card in grayscale (plus a snarky quip)
 - **Sound effects** — dice clatter, coin ping, whooshes, impacts, shield shatter, victory/defeat jingles — all synthesized live with WebAudio (no audio files); mute with the 🔊 button
 - **Snappy pacing** — shorter pauses everywhere, and any banner/result overlay can be **tapped to skip**
 - **Game-feel polish** — embedded display typography (Cinzel / Titan One, still single-file), a freeze-frame **hit-stop** on every damaging blow, outlined damage numbers that punch in with overshoot, HP bars that drain with a lagging ghost trail, and haptic vibration on hits (mobile)
+- **Living presentation** — diagonal **screen wipes** between menus, drifting ambient dust over the board, pointer **parallax** on the camera, cards that idle-sway like they're breathing, and **emote speech bubbles** ("💢 OUCH!", "😎 Too slow!") as the cards react to hits, blocks, and perfect rolls
 - **ATK vs DEF compare** — red-vs-blue number panel with a 👑 on the exchange winner
 - **KO splash + Victory screen** — winner's card crowned, loser grayscaled with a snarky quip
 - **Smart AI** — rerolls weak dice, chases its special condition, and always keeps its mathematically best dice combination (watch its picks glow red)
@@ -62,14 +61,14 @@ Stats were tuned by Monte-Carlo simulation (600 optimal-vs-optimal games per mat
 
 | File | What it is |
 |---|---|
-| `index.html` | **The game** (dark-felt style — canonical version) |
-| `cosmicon-style.html` | Alternative UI skin inspired by the screenshots in `reference/` (lobby, VS screen, pixel-pop styling). Same rules & balance, also mobile-ready. |
+| `index.html` | **The game** — "Cosmicon, Roll On!" pop-art style, modeled on the screenshots in `reference/` |
+| `explorer-style.html` | Alternate "explorer's guild" skin (brass/parchment, embedded character art) with extra combat flair not yet in the main game: per-card signature attacks, shield dome defense, turn-sweep banners, color-coded numbered dice. Same rules & balance. |
 | `reference/` | Visual reference screenshots used for the alternative skin |
 
 ## 🛠 Tech Notes
 
 - Single classic `<script>` — no modules, no framework; three.js r128 (UMD) from cdnjs
-- All art is procedural: card faces, numbered dice faces (with the classic underline under the 6), coin faces, and the table are drawn on 2D canvases and used as `CanvasTexture`s
+- All art is procedural: card faces, dice, coin faces, and the arena are drawn on 2D canvases and used as `CanvasTexture`s (the explorer skin additionally embeds a character sprite sheet as a data URI)
 - Promise-based tween engine drives every animation from one `requestAnimationFrame` loop
 - Dice values are decided up front; the tumble animation converges exactly onto the rolled face's quaternion
 - The AI evaluates all keep-combinations (5-choose-N) including special-condition bonuses before confirming
