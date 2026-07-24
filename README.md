@@ -50,6 +50,9 @@ Stats were tuned by Monte-Carlo simulation (600 optimal-vs-optimal games per mat
 - **Signature attacks per card** — 🐉 fireball with flame trail, 🗿 boulder toss that shatters, 🐺 pounce with claw slashes, 🧚 sparkle barrage, 🐍 poison spray with rising bubbles, 🐯 ice-shard volley
 - **Shield defense** — every defender raises a shining transparent dome that shimmers while the attack flies in, then absorbs the hit or shatters
 - **Clear turn signals** — a blue/red banner sweeps across the board announcing each turn, and the dice themselves are color-coded: ivory when you roll, crimson when the AI rolls
+- **Sound effects** — dice clatter, coin ping, whooshes, impacts, shield shatter, victory/defeat jingles — all synthesized live with WebAudio (no audio files); mute with the 🔊 button
+- **Snappy pacing** — shorter pauses everywhere, and any banner/result overlay can be **tapped to skip**
+- **Game-feel polish** — embedded display typography (Cinzel / Titan One, still single-file), a freeze-frame **hit-stop** on every damaging blow, outlined damage numbers that punch in with overshoot, HP bars that drain with a lagging ghost trail, and haptic vibration on hits (mobile)
 - **ATK vs DEF compare** — red-vs-blue number panel with a 👑 on the exchange winner
 - **KO splash + Victory screen** — winner's card crowned, loser grayscaled with a snarky quip
 - **Smart AI** — rerolls weak dice, chases its special condition, and always keeps its mathematically best dice combination (watch its picks glow red)

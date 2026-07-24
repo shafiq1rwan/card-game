@@ -19,6 +19,10 @@ One classic `<script>` (no modules) — everything is top-level, so test drivers
 
 Mobile: `portrait = aspect < 0.9` switches camera preset and `cardPos()` (cards move from corners to top/bottom); CSS media queries at `max-width: 700px` and `max-height: 470px`; `touch-action` locked on canvas and buttons; safe-area insets on bottom/right UI.
 
+Sound (both files): all SFX are WebAudio-synthesized in the `SFX` object — no audio files. Guarded by `sndOn` (persisted to localStorage key `dcb-sound`, toggled by `#btn-sound`) and try/catch so headless runs never break; audio unlocks on first pointerdown; menu idle rolls are silenced via the `idleActive` check inside `SFX.diceRoll`/`diceLand`. `skippableWait()` + the capture-phase pointerdown listener implement tap-to-skip on the turn sweep, resolve compare, coin result, and KO pauses.
+
+Juice (both files): display fonts are embedded as base64 WOFF2 `@font-face` at the top of `<style>` (index = Cinzel 700, cosmicon = Titan One; both SIL OFL, sourced from jsdelivr @fontsource). Damaging hits trigger `hitStop(90)` — a freeze-frame implemented as a `freezeUntil` early-return at the top of `loop()`. Damage/BLOCKED popups use the `dmgPunch` scale-punch keyframes with text-stroke outlines. HP bars have a lagging "ghost" fill (`.ghost` layer with a slower, delayed width transition; `updatePanels` sets both widths).
+
 ## Verifying changes (important — this works on the dev machine)
 
 1. **Syntax:** extract the inline script and `node --check` it.
