@@ -22,7 +22,7 @@ The game is fully touch-enabled and has a dedicated portrait layout — cards mo
 1. **Main lobby** → hit *Bring it on!* (the dice roll themselves while you decide; *Rules* has the full how-to).
 2. **VS screen** — tap *Edit* to open the card collection, pick your card in the big preview, *Deploy*, then *Time to settle this!*
 3. A 3D **coin flip** decides who attacks first (👑 you / 🤖 AI). Attacker and defender swap every round.
-4. On your turn, **roll 5 dice**, then tap dice to select exactly the number your card needs (⚔️ ATK dice when attacking, 🛡️ DEF dice when defending). Their sum is your combat value.
+4. On your turn, **throw 5 dice — three six-sided cubes and two four-sided chips** — then pick exactly the number your card needs in the center dice picker (⚔️ ATK dice when attacking, 🛡️ DEF dice when defending). Their sum is your combat value.
 5. Not happy? Select any dice and **↻ reroll** them instead — each card has 2–3 reroll chances per turn.
 6. Land your card's **✨ special condition** with the dice you keep for a bonus.
 7. After both sides confirm, the big **ATK vs DEF compare** shows the numbers (crown goes to the exchange winner) — **damage = ATK − DEF**.
@@ -34,7 +34,7 @@ The game is fully touch-enabled and has a dedicated portrait layout — cards mo
 
 | Card | HP | ⚔️ ATK dice | 🛡️ DEF dice | ↻ Rerolls | ✨ Special |
 |---|---|---|---|---|---|
-| 🐉 Blaze Dragon | 30 | 3 | 2 | 2 | 3 of a kind → **+8 ATK** |
+| 🐉 Blaze Dragon | 32 | 3 | 2 | 2 | 3 of a kind → **+8 ATK** |
 | 🗿 Stone Golem | 36 | 3 | 2 | 2 | Pair → **+6 DEF** |
 | 🐺 Thunder Wolf | 28 | 3 | 2 | 3 | Keep a 6 → **+4 ATK** |
 | 🧚 Mystic Fairy | 26 | 3 | 2 | 3 | Pair → **+3 ATK & DEF** |

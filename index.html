@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#141a3c">
+<meta name="theme-color" content="#2b50d4">
 <meta name="mobile-web-app-capable" content="yes">
 <title>Dice Card Battle — Roll On!</title>
 <style>
@@ -14,17 +14,19 @@
     font-weight:400; font-style:normal; font-display:swap;
   }
 
-  * { margin:0; padding:0; box-sizing:border-box; }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html, body {
     width:100%; height:100%; overflow:hidden;
-    background:radial-gradient(1300px at 30% -10%, #2b3a7a, #141a3c 55%, #0e1230 100%);
+    background:#2b50d4;   /* flat pop blue, like the original */
     font-family:'Segoe UI', system-ui, sans-serif; color:#fff; user-select:none;
     -webkit-touch-callout:none;
   }
-  body::before {  /* halftone dots over the gradient, behind the 3D canvas */
+  body::before {  /* diagonal stripes + halftone pattern, behind the 3D canvas */
     content:''; position:fixed; inset:0; z-index:-1;
-    background-image:radial-gradient(rgba(255,255,255,.055) 1.5px, transparent 1.6px);
-    background-size:26px 26px;
+    background-image:
+      repeating-linear-gradient(45deg, rgba(255,255,255,.05) 0 22px, transparent 22px 44px),
+      radial-gradient(rgba(255,255,255,.06) 1.5px, transparent 1.6px);
+    background-size:auto, 26px 26px;
   }
   .hidden { display:none !important; }
   #scene-container { position:fixed; inset:0; }
@@ -72,16 +74,18 @@
   #main-topbar .t1 { font-weight:900; font-size:18px; letter-spacing:1px; }
   #main-topbar .t2 { font-size:13px; opacity:.75; }
   #main-menu {
-    position:absolute; right:26px; top:74px; width:392px;
-    display:flex; flex-direction:column; gap:13px;
+    position:absolute; right:26px; top:70px; width:392px;
+    display:flex; flex-direction:column; gap:12px;
+    background:rgba(255,255,255,.96); border-radius:18px; padding:14px;
+    box-shadow:0 16px 40px rgba(10,16,50,.35);
   }
   #main-tabs { display:flex; gap:8px; }
   .tab {
     flex:1; text-align:center; padding:10px 6px; font-weight:800; font-size:14.5px; cursor:pointer;
     clip-path:polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
-    background:rgba(20,26,60,.7); color:#9fb2e8; border:none; font-family:inherit;
+    background:#e6ebfa; color:#5a6aa0; border:none; font-family:inherit;
   }
-  .tab.active { background:#fff; color:#1c2340; }
+  .tab.active { background:#2b50d4; color:#fff; }
   #featured {
     border-radius:16px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,.45);
     background:linear-gradient(140deg,#7a5cff 0%, #b95cf5 45%, #ff5e9a 100%);
@@ -110,10 +114,9 @@
   #btn-bring:hover { filter:brightness(1.08); transform:translateY(-1px); }
   #main-chips { display:flex; gap:10px; }
   .menu-chip {
-    flex:1; background:rgba(255,255,255,.94); color:#1c2340; border:none; cursor:pointer;
+    flex:1; background:#eef2fc; color:#1c2340; border:1px solid #d8e0f5; cursor:pointer;
     font-family:inherit; font-weight:800; font-size:13.5px; border-radius:12px;
     padding:12px 8px; display:flex; flex-direction:column; align-items:center; gap:4px;
-    box-shadow:0 5px 14px rgba(0,0,0,.3);
   }
   .menu-chip span.ic { font-size:22px; }
   .menu-chip:hover { transform:translateY(-2px); }
@@ -407,13 +410,13 @@
     100% { transform:translate(-50%,-50%) translateY(-95px); opacity:0; }
   }
   .pop-dmg   {
-    font-size:58px; color:#ff5252; -webkit-text-stroke:2px #1c1025;
+    font-size:58px; color:#ff5252; -webkit-text-stroke:2px #ffffff;
     animation:dmgPunch 1.1s cubic-bezier(.2,1.4,.4,1) forwards;
   }
   .pop-atk   { font-size:30px; color:#ffb347; }
   .pop-def   { font-size:30px; color:#5ec8ff; }
   .pop-block {
-    font-size:40px; color:#7dd3fc; -webkit-text-stroke:1.5px #0c2340;
+    font-size:40px; color:#7dd3fc;
     animation:dmgPunch 1.1s cubic-bezier(.2,1.4,.4,1) forwards;
   }
   .pop-info  { font-size:28px; color:#fff; }
@@ -455,24 +458,77 @@
   }
   @media (max-width: 700px) { .emote { font-size:11.5px; padding:4px 9px; } }
 
-  /* ============ Sound toggle ============ */
-  #btn-sound {
-    position:fixed; left:14px; bottom:calc(32px + env(safe-area-inset-bottom)); z-index:60;
-    width:40px; height:40px; border-radius:50%; border:1px solid rgba(255,255,255,.35);
-    background:rgba(20,26,60,.75); color:#fff; font-size:18px; cursor:pointer;
+  /* ============ Dice picker (center modal: reroll or confirm) ============ */
+  #dice-picker {
+    position:fixed; inset:0; z-index:26; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:18px;
+    background:rgba(10,14,32,.66); animation:fadeIn .18s ease-out;
+  }
+  #dp-hint {
+    font-size:15px; background:rgba(12,17,40,.85); padding:8px 20px; border-radius:20px;
+    border:1px solid rgba(255,255,255,.16); text-align:center; max-width:92vw;
+  }
+  #dp-row { display:flex; gap:14px; }
+  .dp-die {
+    width:72px; height:72px; border-radius:16px; border:3px solid rgba(255,255,255,.25);
+    background:linear-gradient(160deg,#ffffff,#dce4f5); color:#2a3566;
+    font-family:'Titan One','Segoe UI',sans-serif; font-size:34px; cursor:pointer;
+    box-shadow:0 8px 18px rgba(0,0,0,.4); transition:transform .12s, border-color .12s, box-shadow .12s;
     touch-action:manipulation; padding:0;
   }
-  #btn-sound:hover { background:rgba(59,108,245,.6); }
+  .dp-die.sel {
+    border-color:#ffd83d; transform:translateY(-10px);
+    box-shadow:0 0 22px rgba(255,216,61,.65), 0 12px 20px rgba(0,0,0,.4);
+  }
+  .dp-die.d4 {
+    clip-path:polygon(50% 3%, 97% 93%, 3% 93%);
+    background:linear-gradient(160deg,#7fb0ff,#3b6cf5); color:#fff;
+    border:none; padding-top:20px; box-shadow:none;
+    filter:drop-shadow(0 6px 8px rgba(0,0,0,.4));
+  }
+  .dp-die.d4.sel {
+    transform:translateY(-10px);
+    filter:drop-shadow(0 0 10px #ffd83d) drop-shadow(0 8px 10px rgba(0,0,0,.35));
+  }
+  #dp-buttons { display:flex; gap:12px; }
+  #dp-buttons .chip-btn { font-size:16px; padding:12px 26px; }
+  #dp-reroll { background:linear-gradient(135deg,#3b6cf5,#4f8cff); color:#fff; }
+  @media (max-width:700px) {
+    .dp-die { width:56px; height:56px; font-size:26px; border-radius:13px; }
+    #dp-row { gap:9px; }
+    #dp-hint { font-size:12px; padding:6px 14px; }
+    #dp-buttons .chip-btn { font-size:13.5px; padding:10px 18px; }
+  }
+  @media (max-height:470px) {
+    #dice-picker { gap:10px; }
+    .dp-die { width:48px; height:48px; font-size:22px; }
+  }
+
+  /* ============ Pause button + pause screen (holds sound toggle) ============ */
+  #btn-pause {
+    position:fixed; left:14px; bottom:calc(32px + env(safe-area-inset-bottom)); z-index:28;
+    width:40px; height:40px; border-radius:50%; border:1px solid rgba(255,255,255,.35);
+    background:rgba(20,26,60,.75); color:#fff; font-size:16px; cursor:pointer;
+    touch-action:manipulation; padding:0;
+  }
+  #btn-pause:hover { background:rgba(59,108,245,.6); }
+  #pause-screen {
+    position:fixed; inset:0; z-index:65; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:14px; background:rgba(8,12,30,.78);
+  }
+  #pause-screen .pt { font-size:44px; margin-bottom:10px; }
+  #pause-screen .chip-btn { width:min(300px, 82vw); font-size:16px; padding:13px 20px; }
+  #ps-quit { background:linear-gradient(135deg,#c0264c,#ff5e7a); color:#fff; }
 
   /* ============ Mobile: narrow screens (portrait phones) ============ */
   @media (max-width: 700px) {
-    #btn-sound { top:4px; right:50px; left:auto; bottom:auto; width:32px; height:32px; font-size:14px; }
+    #btn-pause { top:4px; right:50px; left:auto; bottom:auto; width:32px; height:32px; font-size:13px; }
     #main-topbar { top:10px; left:12px; gap:8px; }
     #main-topbar .logo { font-size:22px; }
     #main-topbar .t1 { font-size:14px; }
     #main-topbar .t2 { font-size:11px; }
     #main-throw { left:50%; top:16%; font-size:13px; }
-    #main-menu { top:auto; bottom:calc(10px + env(safe-area-inset-bottom)); left:12px; right:12px; width:auto; gap:9px; }
+    #main-menu { top:auto; bottom:calc(10px + env(safe-area-inset-bottom)); left:12px; right:12px; width:auto; gap:9px; padding:10px; }
     #featured { padding:12px 14px; }
     #featured .f-emoji { font-size:42px; }
     #featured .f-name { font-size:12.5px; padding:4px 10px; margin-top:3px; }
@@ -602,8 +658,26 @@
 <body>
 
 <div id="scene-container"></div>
-<button id="btn-sound" title="Sound on/off">🔊</button>
+<button id="btn-pause" title="Pause">⏸</button>
 <div id="wipe"></div>
+
+<!-- Pause screen -->
+<div id="pause-screen" class="hidden">
+  <div class="pt pixel-title">PAUSED</div>
+  <button id="ps-resume" class="chip-btn">▶ Resume</button>
+  <button id="ps-sound" class="chip-btn">🔊 Sound: ON</button>
+  <button id="ps-quit" class="chip-btn">🚪 Quit to Menu</button>
+</div>
+
+<!-- Dice picker modal -->
+<div id="dice-picker" class="hidden">
+  <div id="dp-hint"></div>
+  <div id="dp-row"></div>
+  <div id="dp-buttons">
+    <button id="dp-reroll" class="chip-btn">↻ Reroll</button>
+    <button id="dp-confirm" class="chip-btn">✓ Confirm</button>
+  </div>
+</div>
 <div id="uid">UID: 802-493-679</div>
 
 <!-- ==================== MAIN SCREEN ==================== -->
@@ -754,7 +828,7 @@
     <ul>
       <li><b>Pick your favourite card.</b> Each card has HP (top-left), required dice for ⚔️ ATK and 🛡️ DEF (bottom hexes), reroll chances (↻), and a ✨ special effect.</li>
       <li>A <b>coin flip</b> decides who attacks first. Attacker and defender swap every turn.</li>
-      <li>On your turn you <b>throw 5 dice</b>, then select exactly the number your card requires and Confirm — their sum is your ATK or DEF value.</li>
+      <li>On your turn you <b>throw 5 dice</b> — three six-sided cubes and two four-sided chips — then select exactly the number your card requires and Confirm; their sum is your ATK or DEF value.</li>
       <li>You may <b>reroll dice you select</b> — each card has 2 or 3 reroll chances per turn.</li>
       <li>Meet your card's <b>✨ special condition</b> with the dice you keep to gain bonus ATK/DEF.</li>
       <li><b>Damage = ATK − DEF.</b> Reduce the enemy's HP to 0 to win the duel!</li>
@@ -775,7 +849,7 @@
 function diceCounts(d) { const m = {}; d.forEach(v => m[v] = (m[v] || 0) + 1); return m; }
 
 const CARDS = [
-  { id:'dragon', name:'Blaze Dragon', emoji:'🐉', color:'#ff5533', hp:30, atkDice:3, defDice:2, rerolls:2,
+  { id:'dragon', name:'Blaze Dragon', emoji:'🐉', color:'#ff5533', hp:32, atkDice:3, defDice:2, rerolls:2,
     special:{ type:'atk', bonus:8, text:'3 of a kind → +8 ATK',
       check:d => Object.values(diceCounts(d)).some(c => c >= 3) } },
   { id:'golem', name:'Stone Golem', emoji:'🗿', color:'#a08c6a', hp:36, atkDice:3, defDice:2, rerolls:2,
@@ -943,16 +1017,29 @@ document.addEventListener('pointerdown', () => {
   if (skipResolver) skipResolver();
 }, true);
 
-/* mute toggle */
-const sndBtn = document.getElementById('btn-sound');
-function refreshSoundBtn() { sndBtn.textContent = sndOn ? '🔊' : '🔇'; }
-sndBtn.onclick = () => {
+/* pause screen — actually freezes the game loop, and holds the sound toggle */
+let paused = false;
+function refreshSoundLabel() {
+  document.getElementById('ps-sound').textContent = sndOn ? '🔊 Sound: ON' : '🔇 Sound: OFF';
+}
+document.getElementById('btn-pause').onclick = () => {
+  SFX.click();
+  paused = true;
+  refreshSoundLabel();
+  document.getElementById('pause-screen').classList.remove('hidden');
+};
+document.getElementById('ps-resume').onclick = () => {
+  paused = false;
+  document.getElementById('pause-screen').classList.add('hidden');
+  SFX.click();
+};
+document.getElementById('ps-sound').onclick = () => {
   sndOn = !sndOn;
   try { localStorage.setItem('dcb-sound', sndOn ? 'on' : 'off'); } catch (e) {}
-  refreshSoundBtn();
+  refreshSoundLabel();
   if (sndOn) SFX.click();
 };
-refreshSoundBtn();
+document.getElementById('ps-quit').onclick = () => location.reload();
 
 /* ---------- diagonal screen wipe ---------- */
 async function wipeCover() {
@@ -1152,6 +1239,26 @@ function dieFaceTexture(n) {
   return t;
 }
 
+/* four-sided die face: blue triangle chip cap showing a big number */
+function d4FaceTexture(n) {
+  const cv = document.createElement('canvas');
+  cv.width = cv.height = 256;
+  const ctx = cv.getContext('2d');
+  const g = ctx.createLinearGradient(0, 0, 256, 256);
+  g.addColorStop(0, '#7fb0ff'); g.addColorStop(1, '#3b6cf5');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, 256, 256);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 130px "Segoe UI", sans-serif';
+  ctx.fillText(String(n), 128, 140);
+  const t = new THREE.CanvasTexture(cv);
+  t.anisotropy = 4;
+  const span = 1.5;                 // extrude-cap UVs are in shape units (±R + bevel)
+  t.repeat.set(1 / span, 1 / span);
+  t.offset.set(0.5, 0.5);
+  return t;
+}
+
 function coinFaceTexture(emoji, label, c1, c2) {
   const cv = document.createElement('canvas');
   cv.width = cv.height = 256;
@@ -1170,32 +1277,30 @@ function coinFaceTexture(emoji, label, c1, c2) {
   return new THREE.CanvasTexture(cv);
 }
 
-/* white arena floor: soft red/blue halves, checker, ghost icons */
+/* arena floor: crisp half-and-half like the original — red (AI) top, blue (player) bottom */
 function floorTexture() {
   const cv = document.createElement('canvas');
   cv.width = 1024; cv.height = 704;
   const ctx = cv.getContext('2d');
   const W = cv.width, H = cv.height;
-  ctx.fillStyle = '#e8ecf5'; ctx.fillRect(0, 0, W, H);
+  const tg = ctx.createLinearGradient(0, 0, 0, H);
+  tg.addColorStop(0, '#d95d73'); tg.addColorStop(0.5, '#c94f66');
+  tg.addColorStop(0.5, '#4a6fd6'); tg.addColorStop(1, '#3f5ec9');
+  ctx.fillStyle = tg; ctx.fillRect(0, 0, W, H);
   // subtle checker
-  ctx.fillStyle = 'rgba(60,80,140,0.05)';
+  ctx.fillStyle = 'rgba(255,255,255,0.05)';
   const cell = 64;
   for (let y = 0; y < H / cell; y++)
     for (let x = 0; x < W / cell; x++)
       if ((x + y) % 2 === 0) ctx.fillRect(x * cell, y * cell, cell, cell);
-  // AI half tint (top, red) / player half (bottom, blue) with soft blend
-  const tg = ctx.createLinearGradient(0, 0, 0, H);
-  tg.addColorStop(0, 'rgba(240,70,100,0.16)'); tg.addColorStop(0.42, 'rgba(240,70,100,0.10)');
-  tg.addColorStop(0.58, 'rgba(60,110,245,0.10)'); tg.addColorStop(1, 'rgba(60,110,245,0.16)');
-  ctx.fillStyle = tg; ctx.fillRect(0, 0, W, H);
   // center line
-  ctx.strokeStyle = 'rgba(42,53,102,0.22)'; ctx.lineWidth = 4;
+  ctx.strokeStyle = 'rgba(255,255,255,0.55)'; ctx.lineWidth = 5;
   ctx.setLineDash([22, 16]);
   ctx.beginPath(); ctx.moveTo(30, H / 2); ctx.lineTo(W - 30, H / 2); ctx.stroke();
   ctx.setLineDash([]);
   // ghost icons
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.globalAlpha = 0.12;
+  ctx.globalAlpha = 0.15;
   ctx.font = '150px "Segoe UI Emoji", sans-serif';
   ctx.fillText('🛡', W / 2, H * 0.24);
   ctx.fillText('🗡', W / 2, H * 0.76);
@@ -1211,7 +1316,9 @@ let scene, camera, renderer, raycaster, pointer;
 let fitF = 1, shakeAmp = 0;
 const diceMeshes = [];
 const diceValues = [0, 0, 0, 0, 0];
+const DIE_SIDES = [6, 6, 6, 4, 4];   // 3 six-sided cubes + 2 four-sided chips, like the original
 const dieTextures = {};
+const d4Textures = {};
 let atkRing, defRing;
 let dust = null;                                   // ambient drifting motes
 let parX = 0, parY = 0, parTX = 0, parTY = 0;      // pointer parallax
@@ -1232,6 +1339,43 @@ const camPos = CAM.main.pos.clone();
 const camTgt = CAM.main.tgt.clone();
 function camPreset(mode) { return (portrait ? CAM_PORTRAIT : CAM)[mode]; }
 
+/* flat triangular chip for the four-sided dice */
+function d4ChipGeometry(R = 0.66, depth = 0.26) {
+  const s = new THREE.Shape();
+  for (let i = 0; i < 3; i++) {
+    const a = Math.PI / 2 + i * (2 * Math.PI / 3);
+    const x = R * Math.cos(a), y = R * Math.sin(a);
+    i === 0 ? s.moveTo(x, y) : s.lineTo(x, y);
+  }
+  s.closePath();
+  const geo = new THREE.ExtrudeGeometry(s, {
+    depth, bevelEnabled: true, bevelThickness: 0.04, bevelSize: 0.04, bevelSegments: 2,
+  });
+  geo.translate(0, 0, -depth / 2);
+  return geo;
+}
+
+/* rounded-corner cube: subdivided box with its corners pushed onto a radius */
+function roundedBoxGeometry(size, radius, segs = 4) {
+  const geo = new THREE.BoxGeometry(size, size, size, segs, segs, segs);
+  const pos = geo.attributes.position;
+  const half = size / 2 - radius;
+  const v = new THREE.Vector3(), c = new THREE.Vector3();
+  for (let i = 0; i < pos.count; i++) {
+    v.set(pos.getX(i), pos.getY(i), pos.getZ(i));
+    c.set(
+      Math.max(-half, Math.min(half, v.x)),
+      Math.max(-half, Math.min(half, v.y)),
+      Math.max(-half, Math.min(half, v.z))
+    );
+    v.sub(c);
+    if (v.lengthSq() > 1e-10) v.normalize().multiplyScalar(radius);
+    pos.setXYZ(i, c.x + v.x, c.y + v.y, c.z + v.z);
+  }
+  geo.computeVertexNormals();
+  return geo;
+}
+
 function roundedRectShape(w, h, r) {
   const s = new THREE.Shape();
   const x = -w / 2, y = -h / 2;
@@ -1245,7 +1389,7 @@ function roundedRectShape(w, h, r) {
 
 function initScene() {
   scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0x141a3c, 30, 52);
+  scene.fog = new THREE.Fog(0x2b50d4, 30, 52);
 
   camera = new THREE.PerspectiveCamera(46, innerWidth / innerHeight, 0.1, 100);
   fitCamera();
@@ -1321,19 +1465,31 @@ function initScene() {
     cubes.push(m);
   }
 
-  // dice
+  // dice: 3 six-sided cubes + 2 four-sided triangle chips
   for (let v = 1; v <= 6; v++) dieTextures[v] = dieFaceTexture(v);
+  for (let v = 1; v <= 4; v++) d4Textures[v] = d4FaceTexture(v);
   const slotX = [-3, -1.5, 0, 1.5, 3];
   const faceOrder = [3, 4, 1, 6, 2, 5];   // +x,-x,+y,-y,+z,-z (opposites sum to 7)
+  const diceGeo = roundedBoxGeometry(0.92, 0.16);
+  const chipGeo = d4ChipGeometry(0.66, 0.26);
   for (let i = 0; i < 5; i++) {
-    const mats = faceOrder.map(v => new THREE.MeshStandardMaterial({
-      map: dieTextures[v], roughness: 0.35, metalness: 0.05,
-    }));
-    const die = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.92, 0.92), mats);
+    const sides = DIE_SIDES[i];
+    let die;
+    if (sides === 6) {
+      const mats = faceOrder.map(v => new THREE.MeshStandardMaterial({
+        map: dieTextures[v], roughness: 0.35, metalness: 0.05,
+      }));
+      die = new THREE.Mesh(diceGeo, mats);
+    } else {
+      die = new THREE.Mesh(chipGeo, [
+        new THREE.MeshStandardMaterial({ map: d4Textures[4], roughness: 0.35, metalness: 0.05 }),
+        new THREE.MeshStandardMaterial({ color: 0x2b50d4, roughness: 0.4, metalness: 0.1 }),
+      ]);
+    }
     die.castShadow = true;
-    const home = new THREE.Vector3(slotX[i], 0.5, 0.9);
+    const home = new THREE.Vector3(slotX[i], sides === 6 ? 0.5 : 0.32, 0.9);
     die.position.copy(home);
-    die.userData = { home, targetY: home.y, animating: false };
+    die.userData = { home, targetY: home.y, animating: false, sides };
     die.visible = false;
     scene.add(die);
     diceMeshes.push(die);
@@ -1357,7 +1513,7 @@ function initScene() {
   }
 
   atkRing = makeRing(0xffa030);
-  defRing = makeRing(0x44aaff);
+  defRing = makeRing(0x8fd8ff);
 
   renderer.domElement.addEventListener('pointerdown', onPointerDown);
   renderer.domElement.addEventListener('pointermove', onPointerMove);
@@ -1409,7 +1565,7 @@ function hitStop(ms) { freezeUntil = performance.now() + ms; }   // brief freeze
 let lastT = performance.now();
 function loop(now) {
   requestAnimationFrame(loop);
-  if (now < freezeUntil) { lastT = now; renderer.render(scene, camera); return; }
+  if (paused || now < freezeUntil) { lastT = now; renderer.render(scene, camera); return; }
   const dt = Math.min((now - lastT) / 1000, 0.05);
   lastT = now;
 
@@ -1481,10 +1637,17 @@ function quatForValue(v) {
   const yaw = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.random() * Math.PI * 2);
   return yaw.multiply(q);
 }
+/* triangle chips always land flat (cap up); their cap texture carries the value */
+function quatForChip() {
+  const q = new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0));
+  const yaw = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.random() * Math.PI * 2);
+  return yaw.multiply(q);
+}
 function animateDieRoll(die, value, delay) {
   die.userData.animating = true;
   die.visible = true;
-  const qTarget = quatForValue(value);
+  const qTarget = die.userData.sides === 4 ? quatForChip() : quatForValue(value);
+  if (die.userData.sides === 4) die.material[0].map = d4Textures[value];
   const axis = new THREE.Vector3(Math.random() - .5, Math.random() - .5, Math.random() - .5).normalize();
   const spins = (2.5 + Math.random() * 2) * Math.PI * 2;
   const home = die.userData.home;
@@ -1521,7 +1684,7 @@ function animateDieRoll(die, value, delay) {
 function rollDice(indices) {
   SFX.diceRoll();
   return Promise.all(indices.map((i, k) => {
-    diceValues[i] = randInt(1, 6);
+    diceValues[i] = randInt(1, DIE_SIDES[i]);
     return animateDieRoll(diceMeshes[i], diceValues[i], k * 0.07);
   }));
 }
@@ -1547,6 +1710,20 @@ function hideDice() {
     }));
   });
   return Promise.all(anims);
+}
+
+/* line the dice up at the roller's edge of the arena (like the original's side tiles),
+   so the throw visibly hurls them from that player's side into the center */
+function stageDice(side) {
+  const edgeZ = (portrait ? 3.4 : 4.4) * (side === 'player' ? 1 : -1);
+  diceMeshes.forEach((die, i) => {
+    die.visible = true;
+    die.position.set((i - 2) * 1.05, die.userData.home.y, edgeZ);
+    die.scale.setScalar(0.01);
+    die.userData.animating = true;
+    tween({ dur: 0.22, delay: i * 0.05, update: e => die.scale.setScalar(0.01 + e * 0.99) })
+      .then(() => { die.scale.setScalar(1); die.userData.animating = false; });
+  });
 }
 
 function setDieSelected(i, on, color = 0xffc233) {
@@ -1602,6 +1779,8 @@ function pressButton(name) {
 btnRoll.onclick    = () => { SFX.click(); pressButton('roll'); };
 btnReroll.onclick  = () => { SFX.click(); pressButton('reroll'); };
 btnConfirm.onclick = () => { SFX.click(); pressButton('confirm'); };
+el('dp-reroll').onclick  = () => { SFX.click(); pressButton('reroll'); };
+el('dp-confirm').onclick = () => { SFX.click(); pressButton('confirm'); };
 
 function setButtons(v) {
   btnRoll.style.display    = v.roll    ? '' : 'none';
@@ -1658,23 +1837,46 @@ function showOverlay(html, ms) {
   });
 }
 
+/* center-screen dice picker: dimmed backdrop, tap tiles to select, reroll or confirm */
+function openDicePicker() {
+  const row = el('dp-row');
+  row.innerHTML = '';
+  diceValues.forEach((v, i) => {
+    const t = document.createElement('button');
+    t.className = DIE_SIDES[i] === 4 ? 'dp-die d4' : 'dp-die';
+    t.textContent = v;
+    t.onclick = () => {
+      if (selection.has(i)) { selection.delete(i); setDieSelected(i, false); SFX.deselect(); }
+      else { selection.add(i); setDieSelected(i, true); SFX.select(); }
+      refreshChooseUI();
+    };
+    row.appendChild(t);
+  });
+  el('dice-picker').classList.remove('hidden');
+}
+function closeDicePicker() { el('dice-picker').classList.add('hidden'); }
+
 function refreshChooseUI() {
   if (!chooseCtx) return;
   const { need, stage, card } = chooseCtx;
   const stageLabel = stage === 'atk' ? '⚔️ ATK' : '🛡️ DEF';
   const vals = [...selection].map(i => diceValues[i]);
-  let msg = `Select exactly <b>${need}</b> dice for ${stageLabel} — ${selection.size}/${need} selected`;
+  let msg = `Pick exactly <b>${need}</b> dice for ${stageLabel} — ${selection.size}/${need} selected`;
+  let total = '';
   if (selection.size === need) {
     const sc = scoreSelection(card, stage, vals);
     msg = `${vals.join(' + ')} = ${sc.sum}` +
           (sc.bonus ? ` <span class="bonus">+${sc.bonus} ✨ ${card.special.text}</span>` : '') +
           ` → total <b>${sc.total}</b>`;
+    total = ` (${sc.total})`;
   }
-  hint(msg);
-  btnConfirm.disabled = selection.size !== need;
-  btnConfirm.querySelector('small').textContent = `${selection.size}/${need}`;
-  btnReroll.disabled = !(selection.size > 0 && chooseCtx.rerolls > 0);
-  btnReroll.querySelector('small').textContent = `${chooseCtx.rerolls} left`;
+  el('dp-hint').innerHTML = msg;
+  const dpc = el('dp-confirm'), dpr = el('dp-reroll');
+  dpc.disabled = selection.size !== need;
+  dpc.textContent = `✓ Confirm ${stage === 'atk' ? 'ATK' : 'DEF'}${total}`;
+  dpr.disabled = !(selection.size > 0 && chooseCtx.rerolls > 0);
+  dpr.textContent = `↻ Reroll (${chooseCtx.rerolls} left)`;
+  [...el('dp-row').children].forEach((t, i) => t.classList.toggle('sel', selection.has(i)));
 }
 
 function showKeptDice(side, values) {
@@ -1868,6 +2070,7 @@ async function playerStage(stage) {
   const need = stage === 'atk' ? card.atkDice : card.defDice;
   banner(`Turn ${roundNo} · YOUR ${stage === 'atk' ? 'ATK ⚔️' : 'DEF 🛡️'}`, 'player');
   hint(`Throw your 5 dice, then keep <b>${need}</b> for ${stage === 'atk' ? '⚔️ ATK' : '🛡️ DEF'}!`);
+  stageDice('player');
   setButtons({ roll: true });
   btnRoll.disabled = false;
   await waitButton();
@@ -1876,29 +2079,26 @@ async function playerStage(stage) {
 
   selection.clear();
   chooseCtx = { need, stage, rerolls: card.rerolls, card };
-  diceInputEnabled = true;
-  setButtons({ reroll: true, confirm: true });
+  openDicePicker();
   refreshChooseUI();
 
   while (true) {
     const act = await waitButton();
     if (act === 'reroll' && chooseCtx.rerolls > 0 && selection.size > 0) {
       chooseCtx.rerolls--;
-      diceInputEnabled = false;
       const idxs = [...selection];
       for (const i of idxs) setDieSelected(i, false);
       selection.clear();
-      setButtons({});
+      closeDicePicker();            // let the 3D reroll play unobstructed
       await rollDice(idxs);
-      diceInputEnabled = true;
-      setButtons({ reroll: true, confirm: true });
+      openDicePicker();
       refreshChooseUI();
     } else if (act === 'confirm' && selection.size === need) {
       break;
     }
   }
 
-  diceInputEnabled = false;
+  closeDicePicker();
   setButtons({});
   const kept = [...selection].map(i => diceValues[i]);
   const sc = scoreSelection(card, stage, kept);
@@ -1914,11 +2114,11 @@ async function playerStage(stage) {
 
 function aiPlanReroll(values, need, card, stage) {
   const best = bestCombo(values, need, card, stage);
-  const keptMin = Math.min(...best.combo.map(i => values[i]));
+  const keptGood = best.combo.every(i => values[i] >= DIE_SIDES[i] - 1);
   const sp = applicableSpecial(card, stage);
   const specialMet = best.score.bonus > 0;
-  if (keptMin >= 5 && (!sp || specialMet)) return null;
-  const low = [0, 1, 2, 3, 4].filter(i => values[i] <= 3);
+  if (keptGood && (!sp || specialMet)) return null;
+  const low = [0, 1, 2, 3, 4].filter(i => values[i] <= (DIE_SIDES[i] === 4 ? 2 : 3));
   if (low.length > 0) return low;
   if (sp && !specialMet) {
     const outside = [0, 1, 2, 3, 4].filter(i => !best.combo.includes(i));
@@ -1933,6 +2133,7 @@ async function aiStage(stage) {
   banner(`Turn ${roundNo} · AI ${stage === 'atk' ? 'ATK ⚔️' : 'DEF 🛡️'}`, 'ai');
   hint('Cosmo Bot is rolling…');
   setButtons({});
+  stageDice('ai');
   await wait(0.5);
   await rollDice([0, 1, 2, 3, 4]);
   await wait(0.4);
